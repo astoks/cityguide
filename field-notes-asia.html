@@ -712,6 +712,15 @@ body {
   cursor: default;
 }
 .food-place:last-child { border-bottom: none; }
+.food-place-main { display: flex; gap: 10px; min-width: 0; }
+.food-place-photo {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 auto;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  background: rgba(60,40,10,0.04);
+}
 .food-place-name { font-size: 13px; color: #1a1510; margin-bottom: 2px; }
 .food-place-name:hover { color: #D8345F; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .food-place-note { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
@@ -881,6 +890,10 @@ body {
   .food-place {
     grid-template-columns: 1fr;
     gap: 4px;
+  }
+  .food-place-photo {
+    width: 50px;
+    height: 50px;
   }
   .food-place-type {
     justify-self: start;
@@ -1840,11 +1853,53 @@ const BANGKOK_SITE_IMAGES = [
   { terms: ["patpong", "museum"], src: "public/images/Bangkok/III. American City/III-6.patpongmuseum.jpg", caption: "Patpong Museum" },
 ];
 
+const BEIJING_SITE_IMAGES = [
+  { terms: ["tuancheng"], src: "public/images/Beijing/I. origins/I-01 The round city Tuancheng.jpg", caption: "Tuancheng / Round City" },
+  { terms: ["round", "city"], src: "public/images/Beijing/I. origins/I-01 The round city Tuancheng.jpg", caption: "Tuancheng / Round City" },
+  { terms: ["beihai"], src: "public/images/Beijing/I. origins/I-2 Beihai.jpg", caption: "Beihai Park" },
+  { terms: ["白塔"], src: "public/images/Beijing/I. origins/I-3 White Pagoda Baita.jpg", caption: "White Pagoda / Baita" },
+  { terms: ["baita"], src: "public/images/Beijing/I. origins/I-3 White Pagoda Baita.jpg", caption: "White Pagoda / Baita" },
+  { terms: ["white", "pagoda"], src: "public/images/Beijing/I. origins/I-3 White Pagoda Baita.jpg", caption: "White Pagoda / Baita" },
+  { terms: ["temple", "heaven"], src: "public/images/Beijing/II. Ming /1. Templeofheaven.JPG", caption: "Temple of Heaven" },
+  { terms: ["meridian", "gate"], src: "public/images/Beijing/II. Ming /Forbidden city.JPG", caption: "Forbidden City" },
+  { terms: ["hall", "supreme", "harmony"], src: "public/images/Beijing/II. Ming /Forbidden city.JPG", caption: "Forbidden City" },
+  { terms: ["forbidden", "city"], src: "public/images/Beijing/II. Ming /Forbidden city.JPG", caption: "Forbidden City" },
+  { terms: ["jingshan"], src: "public/images/Beijing/II. Ming /12.jingshan.jpg", caption: "Jingshan Park" },
+  { terms: ["drum", "tower"], src: "public/images/Beijing/II. Ming /14drumtower.jpg", caption: "Drum Tower" },
+  { terms: ["bell", "tower"], src: "public/images/Beijing/II. Ming /13. belltower.jpg", caption: "Bell Tower" },
+  { terms: ["银锭桥"], src: "public/images/Beijing/III. Qing/Houhai.jpg", caption: "Houhai / Yinding Bridge" },
+  { terms: ["houhai"], src: "public/images/Beijing/III. Qing/Houhai.jpg", caption: "Houhai" },
+  { terms: ["shichahai"], src: "public/images/Beijing/III. Qing/Houhai.jpg", caption: "Shichahai / Houhai" },
+  { terms: ["guozijian"], src: "public/images/Beijing/III. Qing/Guozijian.JPG", caption: "Guozijian / Confucian Academy" },
+  { terms: ["confucian", "academy"], src: "public/images/Beijing/III. Qing/Guozijian.JPG", caption: "Guozijian / Confucian Academy" },
+  { terms: ["beijing", "hotel"], src: "public/images/Beijing/V. Reform/Beijingfandian.jpg", caption: "Beijing Hotel" },
+  { terms: ["wangfujing"], src: "public/images/Beijing/V. Reform/Wangfujing.jpg", caption: "Wangfujing" },
+  { terms: ["oriental", "plaza"], src: "public/images/Beijing/V. Reform/Orientalplaza.jpg", caption: "Oriental Plaza" },
+];
+
+const BEIJING_FOOD_IMAGES = [
+  { terms: ["xianlaoman"], src: "public/images/Beijing/restaurants/Xianlaoman.jpg", caption: "Xianlaoman" },
+  { terms: ["馅老满"], src: "public/images/Beijing/restaurants/Xianlaoman.jpg", caption: "Xianlaoman" },
+];
+
 function getSiteImageMatch(cityId, site) {
-  if (cityId !== "bangkok") return null;
+  const imageSet = cityId === "bangkok" ? BANGKOK_SITE_IMAGES :
+    cityId === "beijing" ? BEIJING_SITE_IMAGES :
+    null;
+  if (!imageSet) return null;
   const raw = (site.name || "").toLowerCase();
   const normalized = normalizeSiteName(site.name);
-  return BANGKOK_SITE_IMAGES.find(image =>
+  return imageSet.find(image =>
+    image.terms.every(term => raw.includes(term) || normalized.includes(term))
+  ) || null;
+}
+
+function getFoodImageMatch(cityId, place) {
+  const imageSet = cityId === "beijing" ? BEIJING_FOOD_IMAGES : null;
+  if (!imageSet) return null;
+  const raw = (place.name || "").toLowerCase();
+  const normalized = normalizeSiteName(place.name);
+  return imageSet.find(image =>
     image.terms.every(term => raw.includes(term) || normalized.includes(term))
   ) || null;
 }
@@ -2410,10 +2465,13 @@ function renderTextPanel() {
           <div class="food-neighborhood-name">${nbhd}</div>
           ${grouped[nbhd].map(place => `
             <div class="food-place">
-              <div>
+              <div class="food-place-main">
+                ${getFoodImageMatch(state.cityId, place) ? `<img class="food-place-photo" src="${getFoodImageMatch(state.cityId, place).src}" alt="${place.name}">` : ''}
+                <div>
                 <div class="food-place-name" onmouseenter='focusFoodPlace(${JSON.stringify(place.id)})' onclick='focusFoodPlace(${JSON.stringify(place.id)})'>${place.name}</div>
                 <div class="food-place-note">${place.note || ''}</div>
                 ${["bangkok", "beijing"].includes(state.cityId) && getGoogleMapsUrl(place) ? `<a class="food-place-map-link" href="${getGoogleMapsUrl(place)}" target="_blank" rel="noopener noreferrer">Google Maps</a>` : ''}
+                </div>
               </div>
               <div class="food-place-type">${TYPE_LABEL[place.type] || place.type || ''}</div>
             </div>`).join("")}
