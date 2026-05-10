@@ -1904,6 +1904,11 @@ function getFoodImageMatch(cityId, place) {
   ) || null;
 }
 
+function assetSrc(path) {
+  if (!path) return "";
+  return path.split("/").map(part => encodeURIComponent(part)).join("/");
+}
+
 function attachSiteImage(cityId, site) {
   const image = getSiteImageMatch(cityId, site);
   if (!image) return site;
@@ -2411,7 +2416,7 @@ function renderTextPanel() {
       <h2 class="site-name">${site.name}</h2>
       ${site.photo ? `<div class="photo-slot">
         ${site.photoSrc
-          ? `<img class="photo-img" src="${site.photoSrc}" alt="${site.name}">`
+          ? `<img class="photo-img" src="${assetSrc(site.photoSrc)}" alt="${site.name}">`
           : `<div class="photo-slot-inner"><span style="font-size:16px;opacity:0.1">◻</span><span class="photo-label">PHOTO</span></div>`}
         ${site.photoCaption ? `<div class="photo-caption">${site.photoCaption}</div>` : ''}
       </div>` : ''}
@@ -2466,7 +2471,7 @@ function renderTextPanel() {
           ${grouped[nbhd].map(place => `
             <div class="food-place">
               <div class="food-place-main">
-                ${getFoodImageMatch(state.cityId, place) ? `<img class="food-place-photo" src="${getFoodImageMatch(state.cityId, place).src}" alt="${place.name}">` : ''}
+                ${getFoodImageMatch(state.cityId, place) ? `<img class="food-place-photo" src="${assetSrc(getFoodImageMatch(state.cityId, place).src)}" alt="${place.name}">` : ''}
                 <div>
                 <div class="food-place-name" onmouseenter='focusFoodPlace(${JSON.stringify(place.id)})' onclick='focusFoodPlace(${JSON.stringify(place.id)})'>${place.name}</div>
                 <div class="food-place-note">${place.note || ''}</div>
