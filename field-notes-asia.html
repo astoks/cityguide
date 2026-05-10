@@ -569,6 +569,20 @@ body {
   border-radius: 0 2px 2px 0;
 }
 .site-row:hover { background: rgba(60,40,10,0.06); }
+.site-row-content {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.site-row-content.no-photo { grid-template-columns: 1fr; }
+.site-row-thumb {
+  width: 76px;
+  height: 58px;
+  object-fit: cover;
+  border: 1px solid rgba(60,40,10,0.14);
+  background: rgba(60,40,10,0.04);
+}
 .site-row-top {
   display: flex;
   justify-content: space-between;
@@ -882,6 +896,14 @@ body {
     align-items: flex-start;
     gap: 8px;
     flex-direction: column;
+  }
+  .site-row-content {
+    grid-template-columns: 64px 1fr;
+    gap: 10px;
+  }
+  .site-row-thumb {
+    width: 64px;
+    height: 52px;
   }
   .site-row-type,
   .site-row-desc {
@@ -1543,6 +1565,14 @@ const BEIJING_KML = {
     "lng": 116.39825,
     "note": "The most traditional of Beijing's duck places.",
     "type": "restaurant"
+  },
+  {
+    "name": "Yuebin Restaurant 悦宾饭馆",
+    "lat": 39.922373,
+    "lng": 116.401333,
+    "note": "Beijing's first private restaurant after reforms, serving unique and no-frills Shandong food. Don't mind the old patrons chain-smoking inside, if your lungs can handle it.",
+    "type": "restaurant",
+    "mapsUrl": "https://maps.app.goo.gl/V81KT7pYgKA14uih8"
   },
   {
     "name": "King's Joy",
@@ -2387,15 +2417,20 @@ function renderTextPanel() {
       <div class="sites-eyebrow">SITES</div>
       ${sites.map((site, i) => `
         <div class="site-row" style="--site-color:${site.periodColor||walk.periodColor}" onclick="selectSite('${site.id}')">
-          <div class="site-row-top">
-            <div class="site-row-left">
-              <span class="site-row-seq">${String(i+1).padStart(2,'0')}</span>
-              <span class="site-row-name">${site.name}</span>
+          <div class="site-row-content ${site.photoSrc ? '' : 'no-photo'}">
+            ${site.photoSrc ? `<img class="site-row-thumb" src="${assetSrc(site.photoSrc)}" alt="${site.name}">` : ''}
+            <div>
+              <div class="site-row-top">
+                <div class="site-row-left">
+                  <span class="site-row-seq">${String(i+1).padStart(2,'0')}</span>
+                  <span class="site-row-name">${site.name}</span>
+                </div>
+                <span class="period-pill" style="color:${site.periodColor||walk.periodColor};border-color:${(site.periodColor||walk.periodColor)}44;background:${(site.periodColor||walk.periodColor)}18;font-size:7px">${(site.period||walk.period).toUpperCase()}</span>
+              </div>
+              <div class="site-row-type">${site.type}</div>
+              <div class="site-row-desc">${site.description.substring(0,130)}${site.description.length > 130 ? '…' : ''}</div>
             </div>
-            <span class="period-pill" style="color:${site.periodColor||walk.periodColor};border-color:${(site.periodColor||walk.periodColor)}44;background:${(site.periodColor||walk.periodColor)}18;font-size:7px">${(site.period||walk.period).toUpperCase()}</span>
           </div>
-          <div class="site-row-type">${site.type}</div>
-          <div class="site-row-desc">${site.description.substring(0,130)}${site.description.length > 130 ? '…' : ''}</div>
         </div>`).join("")}
     </div>`;
 
