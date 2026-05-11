@@ -2399,10 +2399,23 @@ function renderTextPanel() {
 
   if (state.view === "index") {
     const intro = data.intro;
-    const introBanner = ["bangkok", "beijing"].includes(state.cityId) ? `
+    const introBanners = {
+      bangkok: {
+        src: "public/images/Bangkok/II. The Royal Avenue/watsaketview.jpg",
+        alt: "View across Bangkok from Wat Saket",
+        caption: "Bangkok · Field Notes"
+      },
+      beijing: {
+        src: "public/images/Beijing/II. Ming /Forbidden city.JPG",
+        alt: "The Forbidden City in Beijing",
+        caption: "Beijing · Field Notes"
+      }
+    };
+    const banner = introBanners[state.cityId];
+    const introBanner = banner ? `
       <figure class="city-intro-banner">
-        <img src="public/images/site-theme/beijing-bangkok-banner.jpg" alt="Beijing and Bangkok architectural field notes banner">
-        <figcaption>Beijing / Bangkok · Field Notes</figcaption>
+        <img src="${banner.src}" alt="${banner.alt}">
+        <figcaption>${banner.caption}</figcaption>
       </figure>` : "";
     const walksGrid = data.walks.length ? `
       <div style="margin-top:28px;border-top:1px solid rgba(60,40,10,0.1);padding-top:22px">
