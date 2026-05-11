@@ -501,6 +501,27 @@ body {
   line-height: 1.2;
   margin-bottom: 16px;
 }
+.city-intro-banner {
+  width: 100%;
+  margin: 0 0 20px;
+  border: 1px solid var(--border);
+  background: rgba(60,40,10,0.04);
+}
+.city-intro-banner img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 18 / 6.2;
+  object-fit: cover;
+}
+.city-intro-banner figcaption {
+  padding: 7px 10px;
+  border-top: 1px solid var(--border-lt);
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 1.3px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
 .index-body {
   font-size: 13.5px;
   line-height: 1.9;
@@ -1121,7 +1142,7 @@ const BANGKOK_WALKS = [
       {id:"vimanmek",num:4,name:"Vimanmek Mansion",lat:13.7718,lng:100.5156,period:"Rama V",periodColor:"#2E7D32",type:"Palace / Museum",description:"The world's largest golden teak building — 72 rooms on three floors, built 1900–1901. Rama V used it as his actual preferred residence over the Grand Palace. A Thai interpretation of Victorian domestic architecture: wraparound verandahs, fretwork screens, octagonal tower.",historical:"Originally built on Ko Si Chang island and relocated to Dusit in 1901. The teak construction reflects the last moment when that scale of teak construction was possible in Thailand.",honest:"Traditional dress required. Guided tour compulsory. The teak joinery and the garden setting — allow at least two hours.",photo:true,photoCaption:"Vimanmek Mansion — the octagonal tower and wraparound verandah"},
     ]
   },
-  { id:"american", number:"III", title:"The American City", subtitle:"Cold War Bangkok: Hotels, Patpong & Nana", period:"American Era", periodColor:"#6D4C41", duration:"Afternoon–evening", distance:"Dispersed — BTS", bestTime:"Late afternoon into evening", center:{lat:13.733,lng:100.544}, zoom:14,
+  { id:"american", number:"III", title:"The Tourist City", subtitle:"Cold War Bangkok: Hotels, Patpong & Nana", period:"American Era", periodColor:"#6D4C41", duration:"Afternoon–evening", distance:"Dispersed — BTS", bestTime:"Late afternoon into evening", center:{lat:13.733,lng:100.544}, zoom:14,
     thesis:"Bangkok was a key node in the American security architecture in Southeast Asia — SEATO headquarters, USIS, AID missions, CIA station, and the R&R infrastructure for troops rotating out of Vietnam. The Sukhumvit strip as we know it is essentially a Cold War artifact.",
     sites:[
       {id:"atlanta-hotel",num:1,name:"Atlanta Hotel",lat:13.7389,lng:100.5493,period:"American Era",periodColor:"#6D4C41",type:"Hotel / Mid-century architecture",description:"Built 1952 on Sukhumvit Soi 2 — the oldest hotel on Sukhumvit, still family-run. Terrazzo floors, rattan furniture, ceiling fans: maintained almost without alteration. The swimming pool terrace is the best-preserved 1950s hotel space in Bangkok.",historical:"The Atlanta opened as Sukhumvit was developing as the address for American officials and the expatriate community. Dr. Henn built it as a respectable alternative to more exploitative establishments. The management's anti-sex-tourism notice posted in the lobby since the 1990s is itself a historical document.",honest:"The single most important piece of mid-century hotel architecture in Bangkok and almost nobody writes about it as architecture. The lobby alone justifies a visit.",photo:true,photoCaption:"Atlanta Hotel lobby, Sukhumvit Soi 2 — terrazzo and rattan, 1952, unaltered"},
@@ -1386,7 +1407,7 @@ const BANGKOK_KML = {
       ],
       route:[[13.7173365,100.5139099],[13.7171124,100.5144785],[13.7187279,100.5151866],[13.7214066,100.5162863],[13.7223655,100.5166511],[13.7239924,100.5163215],[13.7234869,100.5143259],[13.7238517,100.5142615],[13.7240393,100.5151788],[13.7244197,100.5163054],[13.7266986,100.5160235],[13.7278867,100.5158519],[13.7274698,100.5148648],[13.7285329,100.5144249],[13.7284808,100.5141353],[13.7301901,100.5138885],[13.7311697,100.5137437],[13.731941,100.5136632],[13.732232,100.5133707],[13.7329407,100.5132098],[13.7339777,100.512845],[13.7341445,100.5118848],[13.7345353,100.5118472],[13.7346343,100.5116434],[13.7351606,100.5115576],[13.7352805,100.511343],[13.7363018,100.5116327],[13.7370574,100.5094708],[13.7386207,100.5066706],[13.7387558,100.5064509],[13.7397407,100.507218],[13.7401523,100.5077276],[13.7407881,100.5083713],[13.740491,100.5087576],[13.740194,100.5092672],[13.7400585,100.5095247],[13.7404181,100.5097339],[13.7406213,100.5095676],[13.7418407,100.510383],[13.7419918,100.5102221],[13.7420439,100.510206]]
     },
-    { id:"american", layerName:"The American City: Postwar Bangkok", periodColor:"#6D4C41",
+    { id:"american", layerName:"The Tourist City: Postwar Bangkok", periodColor:"#6D4C41",
       sites:[
         {name:"Florida Hotel",lat:13.757368,lng:100.5344924,note:""},
         {name:"The Atlanta Hotel, Bangkok, Thailand",lat:13.7369194,lng:100.5519123,note:""},
@@ -2378,6 +2399,11 @@ function renderTextPanel() {
 
   if (state.view === "index") {
     const intro = data.intro;
+    const introBanner = ["bangkok", "beijing"].includes(state.cityId) ? `
+      <figure class="city-intro-banner">
+        <img src="public/images/site-theme/beijing-bangkok-banner.jpg" alt="Beijing and Bangkok architectural field notes banner">
+        <figcaption>Beijing / Bangkok · Field Notes</figcaption>
+      </figure>` : "";
     const walksGrid = data.walks.length ? `
       <div style="margin-top:28px;border-top:1px solid rgba(60,40,10,0.1);padding-top:22px">
         <div class="index-eyebrow">THE ${data.walks.length} WALKS</div>
@@ -2394,6 +2420,7 @@ function renderTextPanel() {
     el.innerHTML = `<div class="text-inner fade-up">
       <div class="index-eyebrow">INTRODUCTION</div>
       <h1 class="index-title">${intro.title}</h1>
+      ${introBanner}
       ${intro.paras.map(p => `<p class="index-body">${p}</p>`).join("")}
       ${walksGrid}
     </div>`;
